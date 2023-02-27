@@ -2,4 +2,4 @@
 bin/
 
 #ignore 
-PersonalWebPageManagementSystem.csproj.user
+*.csproj.user
