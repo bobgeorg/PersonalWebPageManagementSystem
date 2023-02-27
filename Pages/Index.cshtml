@@ -1,0 +1,18 @@
+﻿@page
+@model IndexModel
+
+@{
+   
+    ViewData["Title"] = Model.FullName;
+}
+
+<div class="text-center">
+    <img src="/Images/resume_img.jpg" asp-append-version="true" class="avatar"/>
+    <p class="display-5">Hello! </p>
+    <p></p>
+    <p></p>
+    <p></p>
+    <p class="display-6">I'm <strong>@Model.FullName</strong>, a @Model.Profession</p>
+    <p></p>
+    <p>@Model.Description</p>
+</div>

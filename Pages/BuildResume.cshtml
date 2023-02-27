@@ -1,0 +1,109 @@
+﻿@page "/edit-resume"
+@model PersonalWebPageManagementSystem.Pages.BuildResumeModel
+@{
+
+}
+<div class="container">
+    <form asp-page="BuildResume">
+        <div class="row">
+            <h4 class="form_item">Personal Details</h4>
+            <div class="form-group col-md-6">
+                <label asp-for="Input.RoleDescription"></label>
+                <input class="form-control" asp-for="Input.RoleDescription" />
+                <span asp-validation-for="Input.RoleDescription"></span>
+            </div>
+            <div class="form-group col-md-6">
+                <label class="form_item" asp-for="Input.Image"></label>
+                <input type="file" accept="image/x-png,image/gif,image/jpeg, .jpg, .jpeg, .gif, .png, .tiff" class="form-control form_item" asp-for="Input.Image">
+                <span asp-validation-for="Input.Image"></span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-6">
+                <label class="form_item" asp-for="Input.FirstName"></label>
+                <input class="form-control form_item" asp-for="Input.FirstName" />
+                <span asp-validation-for="Input.FirstName"></span>
+            </div>
+            <div class="form-group col-md-6">
+                <label class="form_item" asp-for="Input.LastName"></label>
+                <input class="form-control form_item" asp-for="Input.LastName" />
+                <span asp-validation-for="Input.LastName"></span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-6">
+                <label class="form_item" asp-for="Input.Email"></label>
+                <input class="form-control form_item" asp-for="Input.Email" />
+                <span asp-validation-for="Input.Email"></span>
+            </div>
+            <div class="form-group col-md-6">
+                <label class="form_item" asp-for="Input.PhoneNumber"></label>
+                <input class="form-control form_item" asp-for="Input.PhoneNumber" />
+                <span asp-validation-for="Input.PhoneNumber"></span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-6">
+                <label class="form_item" asp-for="Input.Country"></label>
+                <input class="form-control form_item" asp-for="Input.Country" />
+                <span asp-validation-for="Input.Country"></span>
+            </div>
+            <div class="form-group col-md-6">
+                <label class="form_item" asp-for="Input.City"></label>
+                <input class="form-control form_item" asp-for="Input.City" />
+                <span asp-validation-for="Input.City"></span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-6">
+                <label class="form_item" asp-for="Input.Address"></label>
+                <input class="form-control form_item" asp-for="Input.Address" />
+                <span asp-validation-for="Input.Address"></span>
+            </div>
+            <div class="form-group col-md-6">
+                <label class="form_item" asp-for="Input.PostalCode"></label>
+                <input class="form-control form_item" asp-for="Input.PostalCode" />
+                <span asp-validation-for="Input.PostalCode"></span>
+            </div>
+        </div>
+        <h4 class="form_item">Professional Summary</h4>
+        <p class="form_item">
+            Write 2-4 short & energetic sentences to interest the reader! Mention your role,
+            experience & most importantly - your biggest achievements, best qualities and skills.
+        </p>
+        <div class="row">
+            <div class="form-group">
+                <textarea rows="6" class="form-control form_item" asp-for="Input.Profile.Description"><</textarea>
+                <span asp-validation-for="Input.Profile.Description"></span>
+            </div>
+        </div>
+        <h4 class="form_item">Employment History</h4>
+        <div class="row">
+            <div class="form_item">
+                <a asp-page=".CreateEmploymentHistory" class="btn btn-primary">Create</a>
+            </div>
+        </div>
+        @foreach (var item in Model.Input.EmploymentHistory)
+        {
+            <div>
+                <div class="card">
+                    <div class="card-body form_item">
+                        <h5 class="card-title">@item.JodTitle</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">
+                            @Convert.ToDateTime(item.FromDate).ToString("yyyy MMM") - @{
+                            var toDate = item.ToDate != null ? Convert.ToDateTime(item.ToDate).ToString("yyyy MMM") : "Present";
+                            } @toDate
+                        </h6>
+                        <h6 class="card-subtitle mb-2 text-muted">@item.Employer - @item.City </h6>
+                        <p class="card-text">@item.Description</p>
+                        <a asp-page="./EditEmploymentHistory" asp-route-id="@item.Id" class="btn btn-primary">Edit</a>
+                        <a asp-page="./DeleteEmploymentHistory" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
+                    </div>
+                </div>
+            </div>
+        }
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </form>
+</div>
