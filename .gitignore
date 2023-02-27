@@ -2,4 +2,4 @@
 bin/
 
 #ignore 
-.csproj.user
+*.csproj.user
