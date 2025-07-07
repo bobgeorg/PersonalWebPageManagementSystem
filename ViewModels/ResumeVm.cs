@@ -4,11 +4,10 @@ using System.Xml.Linq;
 
 namespace PersonalWebPageManagementSystem.ViewModels
 {
-    public class ResumeVm
+    public class ResumeVm : ResumeBaseVm
     {
-        public Guid Id { get; set; }
-
-        [StringLength(100, ErrorMessage = "Maximum length is {1}")]
+        
+        [StringLength(5, ErrorMessage = "Maximum length is {1}")]
         [Display(Name = "Wanted Job Title")]
         [Required]
         public string RoleDescription { get; set; }
@@ -52,9 +51,9 @@ namespace PersonalWebPageManagementSystem.ViewModels
         [Display(Name = "Postal Code")]
         public string PostalCode { get; set; }
         public ResumeProfileVm Profile { get; set; }
-        public List<ResumeExperienceVm> EmploymentHistory { get; set; }
-        public List<ResumeEducationVm> Education { get; set; }
-        public List<ResumeSkillVm> Skills { get; set; }
+        public List<ResumeExperienceVm> EmploymentHistory { get; set; } = new List<ResumeExperienceVm>();
+        public List<ResumeEducationVm> Education { get; set; } = new List<ResumeEducationVm>();
+        public List<ResumeSkillVm> Skills { get; set; } = new List<ResumeSkillVm>();
 
 
 

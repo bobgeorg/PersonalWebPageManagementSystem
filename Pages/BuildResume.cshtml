@@ -78,32 +78,51 @@
             </div>
         </div>
         <h4 class="form_item">Employment History</h4>
-        <div class="row">
-            <div class="form_item">
-                <a asp-page=".CreateEmploymentHistory" class="btn btn-primary">Create</a>
-            </div>
+        <div class="form-group" id='employmentHistory'>
         </div>
-        @foreach (var item in Model.Input.EmploymentHistory)
-        {
-            <div>
-                <div class="card">
-                    <div class="card-body form_item">
-                        <h5 class="card-title">@item.JodTitle</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">
-                            @Convert.ToDateTime(item.FromDate).ToString("yyyy MMM") - @{
-                            var toDate = item.ToDate != null ? Convert.ToDateTime(item.ToDate).ToString("yyyy MMM") : "Present";
-                            } @toDate
-                        </h6>
-                        <h6 class="card-subtitle mb-2 text-muted">@item.Employer - @item.City </h6>
-                        <p class="card-text">@item.Description</p>
-                        <a asp-page="./EditEmploymentHistory" asp-route-id="@item.Id" class="btn btn-primary">Edit</a>
-                        <a asp-page="./DeleteEmploymentHistory" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
-                    </div>
-                </div>
-            </div>
-        }
+        <a class="link-primary" id='addEmployment'>Add Employment</a>
         <div class="form-group">
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" class="btn btn-primary">Create</button>
         </div>
     </form>
-</div>
+</div> 
+
+@section Scripts {
+    <script>
+          $(document).ready(function () {
+            $('#employmentHistory').load('/edit-resume?handler=ExperiencePartial');
+        });
+        var employments = $('#employment tbody');
+        $("#addEmployment").click(function () {
+            jQueryModalGet('/edit-resume?handler=CreateOrEditEmploymentPartial', 'Create experience');
+        });
+        employments.on('click', '.remove', function (e) {
+            $(this).closest('tr').remove();
+        });
+    $(function () {
+        $('#submit').on('click', function () {
+            console('Sumbit Code Start');
+            var employments = $('#employment tbody');
+            console('Employments variable assigned');
+            var rowNo = employments.find('tr').length;
+            console('rowNo variable assigned');
+            var template =
+                '<tr>' +
+                '<td><input type="text" asp-for="Input.EmploymentHistory[rowNo].JobTitle name="EmploymentHistory[' + rowNo + '].JobTitle" id="EmploymentHistory_' + rowNo + 'JobTitle" /></td>' +
+                '<td><input type="text" asp-for="Input.EmploymentHistory[rowNo].Employer name="EmploymentHistory[' + rowNo + '].Employer" id="EmploymentHistory_' + rowNo + 'Employer" /></td>' +
+                '<td><input type="text" asp-for="Input.EmploymentHistory[rowNo].City name="EmploymentHistory[' + rowNo + '].City" id="EmploymentHistory_' + rowNo + 'City" /></td>' +
+                '<td><input type ="date" asp-for="Input.EmploymentHistory[rowNo].FromDate name="EmploymentHistory[' + rowNo + '].FromDate" id="EmploymentHistory_' + rowNo + 'FromDate" /></td>' +
+                '<td><input type ="date" asp-for="Input.EmploymentHistory[rowNo].ToDate name="EmploymentHistory[' + rowNo + '].ToDate" id="EmploymentHistory_' + rowNo + 'ToDate" /></td>' +
+                '</tr>';
+            console('template variable assigned');
+            $('#Experience').remove();
+            console('Experience block removed');
+            employments.append(template);
+            console('template appended to employments');
+        });
+    });
+    </script>
+}
+      
+        
+       

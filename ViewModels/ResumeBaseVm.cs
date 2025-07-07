@@ -1,8 +1,9 @@
-﻿namespace PersonalWebPageManagementSystem.ViewModels
+﻿using Microsoft.AspNetCore.Mvc.RazorPages;
+
+namespace PersonalWebPageManagementSystem.ViewModels
 {
-    public class ResumeBaseVm
+    public class ResumeBaseVm 
     {
-        public string Title { get; set; }
-        public string Description { get; set; }
+        
     }
 }

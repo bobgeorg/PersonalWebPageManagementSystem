@@ -1,16 +1,45 @@
+
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using PersonalWebPageManagementSystem.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 
+// Configure the HTTP request pipeline.
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddDbContext<PersonalWebPageContext>(options =>
+        options.UseSqlite(builder.Configuration.GetConnectionString("WPMSContextSQLite")));
+    builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+}
+else
+{
+    builder.Services.AddDbContext<PersonalWebPageContext>(options =>
+        options.UseSqlServer(builder.Configuration.GetConnectionString("WPMSContextSQLServer")));
+    
+}
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+if(!builder.Environment.IsDevelopment()){
+ app.UseExceptionHandler("/Error");
     app.UseHsts();
+}
+else
+{
+    app.UseDeveloperExceptionPage();
+    app.UseMigrationsEndPoint();
+}
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    var context = services.GetRequiredService<PersonalWebPageContext>();
+    context.Database.EnsureCreated();
+    // DbInitializer.Initialize(context);
 }
 
 app.UseHttpsRedirection();

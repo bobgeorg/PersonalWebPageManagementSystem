@@ -6,6 +6,7 @@ namespace PersonalWebPageManagementSystem.Models
 {
     public class ResumeExperience
     {
+        [Required]
         public Guid Id { get; set; }
 
         [Required]
