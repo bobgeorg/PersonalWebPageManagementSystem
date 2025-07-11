@@ -26,7 +26,7 @@ body {
 }
 
 
-form_item {
+.form_item {
     margin-top: 0.5em;
     margin-bottom: 0.5em;
 }
