@@ -10,7 +10,7 @@ namespace PersonalWebPageManagementSystem.Models
         public Guid Id { get; set; }
 
         [Required]
-        public string JodTitle { get; set; }
+        public string JobTitle { get; set; }
 
         [Required]
         public string Employer { get; set; }

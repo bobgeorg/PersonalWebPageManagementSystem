@@ -7,7 +7,7 @@ namespace PersonalWebPageManagementSystem.ViewModels
     public class ResumeExperienceVm : ResumeBaseVm
     {
         public int Id { get; set; }
-        [StringLength(10, ErrorMessage = "Maximum length is {1}")]
+        [StringLength(100, ErrorMessage = "Maximum length is {1}")]
         [Display(Name = "Job Title")]
         [Required]
         public string JobTitle { get; set; }
