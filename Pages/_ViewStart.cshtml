@@ -1,6 +1,7 @@
 ﻿@{
 
     Layout = "_Layout";
-    ViewData["Title"] = Model.FullName;
-
+    //ViewData["Title"] = Model.FirstName + " " + Model.LastName;;
+    var modelType = Model?.GetType().FullName ?? "null";
+    ViewData["Title"] = "Model Type: " + modelType;
 }

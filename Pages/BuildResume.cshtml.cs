@@ -1,94 +1,148 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using PersonalWebPageManagementSystem.ViewModels;
-using System.ComponentModel.DataAnnotations;
-using PersonalWebPageManagementSystem.Models;
-using PersonalWebPageManagementSystem.Data;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using PersonalWebPageManagementSystem.Core.Application.Services;
+using PersonalWebPageManagementSystem.Presentation.Mappers;
+using PersonalWebPageManagementSystem.Presentation.ViewModels;
 
 namespace PersonalWebPageManagementSystem.Pages
 {
     public class BuildResumeModel : PageModel
     {
-        public string FullName { get; set; }
-
         private readonly ILogger<BuildResumeModel> _logger;
-         private readonly PersonalWebPageContext _context;
+        private readonly IResumeService _resumeService;
 
-        public BuildResumeModel(ILogger<BuildResumeModel> logger, PersonalWebPageContext context)
+        public BuildResumeModel(ILogger<BuildResumeModel> logger, IResumeService resumeService)
         {
             _logger = logger;
-            _context = context;
-            FullName = "George Bompotas";
-            
+            _resumeService = resumeService;
         }
+
+        [BindProperty]
+        public ResumeVm Input { get; set; }
+
+        public ResumeExperienceVm Experience { get; set; }
+
         #region OnGet
-         public void OnGet()
+        public async Task OnGetAsync(Guid? id = null)
         {
-            Input = new ResumeVm();
+            if (id.HasValue)
+            {
+                // Edit existing resume
+                var resumeDto = await _resumeService.GetResumeByIdAsync(id.Value);
+                Input = ResumeMapper.ToViewModel(resumeDto);
+            }
+            else
+            {
+                // Create new resume
+                Input = new ResumeVm();
+            }
         }
 
-        public PartialViewResult OnGetExperiencePartial(){
-            var empHistory = Input.EmploymentHistory;
-             return new PartialViewResult {
-                    ViewName = "_EmploymentHistoryPartialTable",
-                    ViewData = new ViewDataDictionary<List<ResumeExperienceVm>>(ViewData, empHistory)
-                };
+        public PartialViewResult OnGetExperiencePartial()
+        {
+            var empHistory = Input?.EmploymentHistory ?? new List<ResumeExperienceVm>();
+            return new PartialViewResult
+            {
+                ViewName = "_EmploymentHistoryPartialTable",
+                ViewData = new ViewDataDictionary<List<ResumeExperienceVm>>(ViewData, empHistory)
+            };
         }
 
-        public PartialViewResult OnGetCreateOrEditEmploymentPartial(int id = 0){
-            ResumeExperienceVm exp = null;
-            if(id == 0){
+        public PartialViewResult OnGetCreateOrEditEmploymentPartial(int id = 0)
+        {
+            ResumeExperienceVm exp;
+            if (id == 0)
+            {
                 exp = new ResumeExperienceVm();
-            }else{
-                exp = Input.EmploymentHistory[id];
+            }
+            else
+            {
+                exp = Input?.EmploymentHistory?.ElementAtOrDefault(id) ?? new ResumeExperienceVm();
             }
 
-             return new PartialViewResult {
-                    ViewName = "_EmploymentHistoryPartial",
-                    ViewData = new ViewDataDictionary<ResumeExperienceVm>(ViewData, exp)
-                };
+            return new PartialViewResult
+            {
+                ViewName = "_EmploymentHistoryPartial",
+                ViewData = new ViewDataDictionary<ResumeExperienceVm>(ViewData, exp)
+            };
         }
 
         #endregion
 
         #region OnPost
-         public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
             {
                 return Page();
             }
 
-           /*  var entry = _context.Add(new Resume { Id = Guid.NewGuid()});
-            entry.CurrentValues.SetValues(Input);*/
-            await _context.SaveChangesAsync();
-            return RedirectToPage("./index"); 
+            try
+            {
+                var resumeDto = ResumeMapper.ToDto(Input);
+                
+                if (Input.Id == Guid.Empty)
+                {
+                    // Create new resume
+                    resumeDto.Id = Guid.NewGuid();
+                    await _resumeService.CreateResumeAsync(resumeDto);
+                }
+                else
+                {
+                    // Update existing resume
+                    await _resumeService.UpdateResumeAsync(resumeDto);
+                }
+
+                return RedirectToPage("./Index");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving resume");
+                ModelState.AddModelError("", "An error occurred while saving the resume.");
+                return Page();
+            }
         }
 
-        public PartialViewResult OnPostExperienceCreateOrEdit(int id,ResumeExperienceVm exp){
-            if (id == 0){
+        public PartialViewResult OnPostExperienceCreateOrEdit(int id, ResumeExperienceVm exp)
+        {
+            if (Input?.EmploymentHistory == null)
+            {
+                Input = new ResumeVm();
+            }
 
+            if (id == 0)
+            {
+                exp.Id = Guid.NewGuid();
                 Input.EmploymentHistory.Add(exp);
-                
-            }else{
-
+            }
+            else if (id < Input.EmploymentHistory.Count)
+            {
                 Input.EmploymentHistory[id] = exp;
             }
+
             var empHistory = Input.EmploymentHistory;
-            return  new PartialViewResult {
+            return new PartialViewResult
+            {
                 ViewName = "_EmploymentHistoryPartialTable",
                 ViewData = new ViewDataDictionary<List<ResumeExperienceVm>>(ViewData, empHistory)
             };
         }
 
-        #endregion OnPost
-         [BindProperty]
-        public ResumeVm Input { get; set; }
+        public PartialViewResult OnPostDeleteExperience(int id)
+        {
+            if (Input?.EmploymentHistory != null && id >= 0 && id < Input.EmploymentHistory.Count)
+            {
+                Input.EmploymentHistory.RemoveAt(id);
+            }
 
-        public ResumeExperienceVm Experience {get; set;}
-
-
-       
+            var empHistory = Input?.EmploymentHistory ?? new List<ResumeExperienceVm>();
+            return new PartialViewResult
+            {
+                ViewName = "_EmploymentHistoryPartialTable",
+                ViewData = new ViewDataDictionary<List<ResumeExperienceVm>>(ViewData, empHistory)
+            };
+        }
+        #endregion
     }
 }

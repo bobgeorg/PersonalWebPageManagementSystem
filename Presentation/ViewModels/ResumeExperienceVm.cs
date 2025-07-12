@@ -1,23 +1,22 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Xml.Linq;
+using System.ComponentModel.DataAnnotations;
 
-
-namespace PersonalWebPageManagementSystem.ViewModels
+namespace PersonalWebPageManagementSystem.Presentation.ViewModels
 {
-    public class ResumeExperienceVm : ResumeBaseVm
+    public class ResumeExperienceVm
     {
-        public int Id { get; set; }
-        [StringLength(10, ErrorMessage = "Maximum length is {1}")]
+        public Guid Id { get; set; }
+
+        [StringLength(200, ErrorMessage = "Maximum length is {1}")]
         [Display(Name = "Job Title")]
         [Required]
         public string JobTitle { get; set; }
 
-        [StringLength(50, ErrorMessage = "Maximum length is {1}")]
+        [StringLength(200, ErrorMessage = "Maximum length is {1}")]
         [Display(Name = "Employer")]
         [Required]
         public string Employer { get; set; }
 
-        [StringLength(20, ErrorMessage = "Maximum length is {1}")]
+        [StringLength(100, ErrorMessage = "Maximum length is {1}")]
         [Display(Name = "City")]
         [Required]
         public string City { get; set; }
@@ -27,7 +26,6 @@ namespace PersonalWebPageManagementSystem.ViewModels
         public DateTime? FromDate { get; set; }
 
         [Display(Name = "To Date")]
-        [Required]
         public DateTime? ToDate { get; set; }
     }
 }

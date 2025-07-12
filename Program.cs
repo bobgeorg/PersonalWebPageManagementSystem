@@ -1,25 +1,21 @@
 
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using PersonalWebPageManagementSystem.Data;
+using PersonalWebPageManagementSystem.Infrastructure;
+using PersonalWebPageManagementSystem.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 
-// Configure the HTTP request pipeline.
+// Add Infrastructure and Application services
+builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddApplication();
+
+// Configure the HTTP request pipeline exception filter for development
 if (builder.Environment.IsDevelopment())
 {
-    builder.Services.AddDbContext<PersonalWebPageContext>(options =>
-        options.UseSqlite(builder.Configuration.GetConnectionString("WPMSContextSQLite")));
     builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-}
-else
-{
-    builder.Services.AddDbContext<PersonalWebPageContext>(options =>
-        options.UseSqlServer(builder.Configuration.GetConnectionString("WPMSContextSQLServer")));
-    
 }
 var app = builder.Build();
 
