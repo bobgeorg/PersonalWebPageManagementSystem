@@ -1,0 +1,128 @@
+﻿@page "/edit-resume"
+@model PersonalWebPageManagementSystem.Web.Razor.Pages.BuildResumeModel
+@{
+    ViewData["Title"] = "Build Resume";
+}
+<div class="container">
+    <form asp-page="BuildResume">
+        <div class="row">
+            <h4 class="form_item">Personal Details</h4>
+            <div class="form-group col-md-6">
+                <label asp-for="Input.Description"></label>
+                <input class="form-control" asp-for="Input.Description" />
+                <span asp-validation-for="Input.Description"></span>
+            </div>
+            <div class="form-group col-md-6">
+                <label class="form_item" asp-for="Input.Image"></label>
+                <input type="file" accept="image/x-png,image/gif,image/jpeg, .jpg, .jpeg, .gif, .png, .tiff" class="form-control form_item" asp-for="Input.Image">
+                <span asp-validation-for="Input.Image"></span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-6">
+                <label class="form_item" asp-for="Input.FirstName"></label>
+                <input class="form-control form_item" asp-for="Input.FirstName" />
+                <span asp-validation-for="Input.FirstName"></span>
+            </div>
+            <div class="form-group col-md-6">
+                <label class="form_item" asp-for="Input.LastName"></label>
+                <input class="form-control form_item" asp-for="Input.LastName" />
+                <span asp-validation-for="Input.LastName"></span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-6">
+                <label class="form_item" asp-for="Input.Email"></label>
+                <input class="form-control form_item" asp-for="Input.Email" />
+                <span asp-validation-for="Input.Email"></span>
+            </div>
+            <div class="form-group col-md-6">
+                <label class="form_item" asp-for="Input.PhoneNumber"></label>
+                <input class="form-control form_item" asp-for="Input.PhoneNumber" />
+                <span asp-validation-for="Input.PhoneNumber"></span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-6">
+                <label class="form_item" asp-for="Input.Country"></label>
+                <input class="form-control form_item" asp-for="Input.Country" />
+                <span asp-validation-for="Input.Country"></span>
+            </div>
+            <div class="form-group col-md-6">
+                <label class="form_item" asp-for="Input.City"></label>
+                <input class="form-control form_item" asp-for="Input.City" />
+                <span asp-validation-for="Input.City"></span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-6">
+                <label class="form_item" asp-for="Input.Address"></label>
+                <input class="form-control form_item" asp-for="Input.Address" />
+                <span asp-validation-for="Input.Address"></span>
+            </div>
+            <div class="form-group col-md-6">
+                <label class="form_item" asp-for="Input.PostalCode"></label>
+                <input class="form-control form_item" asp-for="Input.PostalCode" />
+                <span asp-validation-for="Input.PostalCode"></span>
+            </div>
+        </div>
+        <h4 class="form_item">Professional Summary</h4>
+        <p class="form_item">
+            Write 2-4 short & energetic sentences to interest the reader! Mention your role,
+            experience & most importantly - your biggest achievements, best qualities and skills.
+        </p>
+        <div class="row">
+            <div class="form-group">
+                <textarea rows="6" class="form-control form_item" asp-for="Input.Profile.Description"><</textarea>
+                <span asp-validation-for="Input.Profile.Description"></span>
+            </div>
+        </div>
+        <h4 class="form_item">Employment History</h4>
+        <div class="form-group" id='employmentHistory'>
+        </div>
+        <a class="link-primary" id='addEmployment'>Add Employment</a>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Create</button>
+        </div>
+    </form>
+</div> 
+
+@section Scripts {
+    <script>
+          $(document).ready(function () {
+            $('#employmentHistory').load('/edit-resume?handler=ExperiencePartial');
+        });
+        var employments = $('#employment tbody');
+        $("#addEmployment").click(function () {
+            jQueryModalGet('/edit-resume?handler=CreateOrEditEmploymentPartial', 'Create experience');
+        });
+        employments.on('click', '.remove', function (e) {
+            $(this).closest('tr').remove();
+        });
+    $(function () {
+        $('#submit').on('click', function () {
+            console('Sumbit Code Start');
+            var employments = $('#employment tbody');
+            console('Employments variable assigned');
+            var rowNo = employments.find('tr').length;
+            console('rowNo variable assigned');
+            var template =
+                '<tr>' +
+                '<td><input type="text" asp-for="Input.EmploymentHistory[rowNo].JobTitle name="EmploymentHistory[' + rowNo + '].JobTitle" id="EmploymentHistory_' + rowNo + 'JobTitle" /></td>' +
+                '<td><input type="text" asp-for="Input.EmploymentHistory[rowNo].Employer name="EmploymentHistory[' + rowNo + '].Employer" id="EmploymentHistory_' + rowNo + 'Employer" /></td>' +
+                '<td><input type="text" asp-for="Input.EmploymentHistory[rowNo].City name="EmploymentHistory[' + rowNo + '].City" id="EmploymentHistory_' + rowNo + 'City" /></td>' +
+                '<td><input type ="date" asp-for="Input.EmploymentHistory[rowNo].FromDate name="EmploymentHistory[' + rowNo + '].FromDate" id="EmploymentHistory_' + rowNo + 'FromDate" /></td>' +
+                '<td><input type ="date" asp-for="Input.EmploymentHistory[rowNo].ToDate name="EmploymentHistory[' + rowNo + '].ToDate" id="EmploymentHistory_' + rowNo + 'ToDate" /></td>' +
+                '</tr>';
+            console('template variable assigned');
+            $('#Experience').remove();
+            console('Experience block removed');
+            employments.append(template);
+            console('template appended to employments');
+        });
+    });
+    </script>
+}
+      
+        
+       
