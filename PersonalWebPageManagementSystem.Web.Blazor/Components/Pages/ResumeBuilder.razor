@@ -1,0 +1,295 @@
+@page "/resume-builder"
+@using PersonalWebPageManagementSystem.Presentation.ViewModels
+@using PersonalWebPageManagementSystem.Presentation.Mappers
+@using PersonalWebPageManagementSystem.Application.Services
+@inject IResumeService ResumeService
+@inject IJSRuntime JSRuntime
+
+<PageTitle>Resume Builder</PageTitle>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8">
+            <h1>Resume Builder</h1>
+            
+            @if (Resume != null)
+            {
+                <EditForm Model="Resume" OnValidSubmit="SaveResume">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+                    
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h4>Personal Information</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="firstName" class="form-label">First Name</label>
+                                        <InputText id="firstName" class="form-control" @bind-Value="Resume.FirstName" />
+                                        <ValidationMessage For="@(() => Resume.FirstName)" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="lastName" class="form-label">Last Name</label>
+                                        <InputText id="lastName" class="form-control" @bind-Value="Resume.LastName" />
+                                        <ValidationMessage For="@(() => Resume.LastName)" />
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="email" class="form-label">Email</label>
+                                        <InputText id="email" type="email" class="form-control" @bind-Value="Resume.Email" />
+                                        <ValidationMessage For="@(() => Resume.Email)" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="phone" class="form-label">Phone Number</label>
+                                        <InputText id="phone" class="form-control" @bind-Value="Resume.PhoneNumber" />
+                                        <ValidationMessage For="@(() => Resume.PhoneNumber)" />
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description</label>
+                                <InputTextArea id="description" class="form-control" rows="3" @bind-Value="Resume.Description" />
+                                <ValidationMessage For="@(() => Resume.Description)" />
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-3">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h4>Experience</h4>
+                            <button type="button" class="btn btn-primary btn-sm" @onclick="AddExperience">
+                                <i class="bi bi-plus"></i> Add Experience
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            @if (Resume.EmploymentHistory.Any())
+                            {
+                                @for (int i = 0; i < Resume.EmploymentHistory.Count; i++)
+                                {
+                                    var index = i;
+                                    var experience = Resume.EmploymentHistory[index];
+                                    
+                                    <div class="border rounded p-3 mb-3">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <h6>Experience @(index + 1)</h6>
+                                            <button type="button" class="btn btn-danger btn-sm" @onclick="() => RemoveExperience(index)">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
+                                        
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Job Title</label>
+                                                    <InputText class="form-control" @bind-Value="experience.JobTitle" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Employer</label>
+                                                    <InputText class="form-control" @bind-Value="experience.Employer" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="mb-3">
+                                                    <label class="form-label">City</label>
+                                                    <InputText class="form-control" @bind-Value="experience.City" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="mb-3">
+                                                    <label class="form-label">From Date</label>
+                                                    <InputDate class="form-control" @bind-Value="experience.FromDate" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="mb-3">
+                                                    <label class="form-label">To Date</label>
+                                                    <InputDate class="form-control" @bind-Value="experience.ToDate" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <p class="text-muted">No experience added yet. Click "Add Experience" to get started.</p>
+                            }
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <button type="submit" class="btn btn-success me-2">
+                            <i class="bi bi-check-circle"></i> Save Resume
+                        </button>
+                        <button type="button" class="btn btn-secondary" @onclick="LoadSampleData">
+                            <i class="bi bi-file-earmark"></i> Load Sample Data
+                        </button>
+                    </div>
+                </EditForm>
+            }
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card sticky-top">
+                <div class="card-header">
+                    <h4>Preview</h4>
+                </div>
+                <div class="card-body">
+                    @if (Resume != null)
+                    {
+                        <div class="resume-preview">
+                            <h5>@Resume.FirstName @Resume.LastName</h5>
+                            <p class="text-muted">@Resume.Email | @Resume.PhoneNumber</p>
+                            
+                            @if (!string.IsNullOrEmpty(Resume.Description))
+                            {
+                                <div class="mb-3">
+                                    <h6>About</h6>
+                                    <p class="small">@Resume.Description</p>
+                                </div>
+                            }
+                            
+                            @if (Resume.EmploymentHistory.Any())
+                            {
+                                <div class="mb-3">
+                                    <h6>Experience</h6>
+                                    @foreach (var exp in Resume.EmploymentHistory)
+                                    {
+                                        <div class="mb-2">
+                                            <strong class="small">@exp.JobTitle</strong><br>
+                                            <span class="text-muted small">@exp.Employer, @exp.City</span><br>
+                                            <span class="text-muted small">
+                                                @exp.FromDate?.ToString("MM/yyyy") - @(exp.ToDate?.ToString("MM/yyyy") ?? "Present")
+                                            </span>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private ResumeVm? Resume;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Resume = new ResumeVm();
+        
+        // Try to load existing resume
+        try
+        {
+            var existingResumes = await ResumeService.GetAllResumesAsync();
+            if (existingResumes.Any())
+            {
+                var resumeDto = existingResumes.First();
+                Resume = ResumeMapper.ToViewModel(resumeDto);
+            }
+        }
+        catch
+        {
+            // If no resume exists, start with empty one
+        }
+    }
+
+    private async Task SaveResume()
+    {
+        if (Resume == null) return;
+        
+        try
+        {
+            var resumeDto = ResumeMapper.ToDto(Resume);
+            if (resumeDto != null)
+            {
+                if (resumeDto.Id == Guid.Empty)
+                {
+                    resumeDto.Id = Guid.NewGuid();
+                    await ResumeService.CreateResumeAsync(resumeDto);
+                }
+                else
+                {
+                    await ResumeService.UpdateResumeAsync(resumeDto);
+                }
+                
+                await JSRuntime.InvokeVoidAsync("alert", "Resume saved successfully!");
+            }
+        }
+        catch (Exception ex)
+        {
+            await JSRuntime.InvokeVoidAsync("alert", $"Error saving resume: {ex.Message}");
+        }
+    }
+
+    private void AddExperience()
+    {
+        Resume?.EmploymentHistory.Add(new ResumeExperienceVm 
+        { 
+            Id = Guid.NewGuid(),
+            FromDate = DateTime.Now.AddYears(-1)
+        });
+    }
+
+    private void RemoveExperience(int index)
+    {
+        if (Resume != null && index >= 0 && index < Resume.EmploymentHistory.Count)
+        {
+            Resume.EmploymentHistory.RemoveAt(index);
+        }
+    }
+
+    private void LoadSampleData()
+    {
+        if (Resume == null) return;
+        
+        Resume.FirstName = "John";
+        Resume.LastName = "Doe";
+        Resume.Email = "john.doe@example.com";
+        Resume.PhoneNumber = "+1 (555) 123-4567";
+        Resume.Description = "Experienced software developer with expertise in .NET and modern web technologies.";
+        Resume.Country = "USA";
+        Resume.City = "New York";
+        Resume.Address = "123 Main Street";
+        Resume.PostalCode = "10001";
+        
+        Resume.EmploymentHistory.Clear();
+        Resume.EmploymentHistory.Add(new ResumeExperienceVm
+        {
+            Id = Guid.NewGuid(),
+            JobTitle = "Senior Software Developer",
+            Employer = "Tech Solutions Inc.",
+            City = "New York",
+            FromDate = DateTime.Now.AddYears(-3),
+            ToDate = DateTime.Now
+        });
+        
+        Resume.EmploymentHistory.Add(new ResumeExperienceVm
+        {
+            Id = Guid.NewGuid(),
+            JobTitle = "Software Developer",
+            Employer = "StartupCorp",
+            City = "San Francisco",
+            FromDate = DateTime.Now.AddYears(-5),
+            ToDate = DateTime.Now.AddYears(-3)
+        });
+    }
+}

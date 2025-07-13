@@ -1,11 +1,11 @@
 using PersonalWebPageManagementSystem.Application.DTOs;
-using PersonalWebPageManagementSystem.Web.Razor.ViewModels;
+using PersonalWebPageManagementSystem.Presentation.ViewModels;
 
-namespace PersonalWebPageManagementSystem.Web.Razor.Mappers
+namespace PersonalWebPageManagementSystem.Presentation.Mappers
 {
     public static class ResumeMapper
     {
-        public static ResumeVm ToViewModel(ResumeDto dto)
+        public static ResumeVm? ToViewModel(ResumeDto? dto)
         {
             if (dto == null) return null;
 
@@ -56,7 +56,7 @@ namespace PersonalWebPageManagementSystem.Web.Razor.Mappers
             };
         }
 
-        public static ResumeDto ToDto(ResumeVm viewModel)
+        public static ResumeDto? ToDto(ResumeVm? viewModel)
         {
             if (viewModel == null) return null;
 

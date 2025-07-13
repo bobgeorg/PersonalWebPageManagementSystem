@@ -1,34 +1,118 @@
 # PersonalWebPageManagementSystem
 
-A modern ASP.NET Core 8.0 web application that offers an easy way to create and manage a personal web page and resume.
+A modern .NET 9.0 web application built with **Clean Architecture** principles that offers multiple UI options for creating and managing personal web pages and resumes.
 
 ![Homepage](https://github.com/user-attachments/assets/fcadd3af-c204-46eb-90b0-5229456ba0f1)
 
-## Features
+## 🏗️ Clean Architecture Overview
 
-- **Personal Resume Management**: Create and edit your professional resume with personal details, employment history, education, and skills
-- **Responsive Design**: Clean, modern UI using Bootstrap that works on all devices
-- **Data Persistence**: SQLite database for development, SQL Server support for production
-- **Rich Form Validation**: Comprehensive client and server-side validation
-- **Dynamic Content**: Add multiple employment entries, education records, and skills
+This project follows Clean Architecture principles with clear separation of concerns and dependency inversion:
+
+```mermaid
+graph TB
+    subgraph "🎨 Presentation Layer"
+        WR[Web.Razor<br/>📄 Razor Pages]
+        WB[Web.Blazor<br/>⚡ Interactive Components]
+        PR[Presentation<br/>🔄 ViewModels & Mappers]
+    end
+    
+    subgraph "💼 Application Layer"
+        AS[Application Services<br/>📋 Business Logic]
+        DTO[DTOs<br/>📦 Data Transfer Objects]
+        IS[Service Interfaces<br/>🔌 Contracts]
+    end
+    
+    subgraph "🏗️ Infrastructure Layer"
+        EF[Entity Framework<br/>🗄️ Data Access]
+        REPO[Repositories<br/>📚 Data Operations]
+        DI[Dependency Injection<br/>⚙️ Configuration]
+    end
+    
+    subgraph "🎯 Domain Layer"
+        ENT[Entities<br/>👤 Resume, Experience, etc.]
+        INT[Interfaces<br/>🔗 Repository Contracts]
+    end
+
+    %% Dependencies (arrows point toward dependencies)
+    WR --> PR
+    WB --> PR
+    PR --> AS
+    AS --> IS
+    AS --> DTO
+    REPO --> INT
+    EF --> ENT
+    DI --> REPO
+    AS --> INT
+    
+    %% Styling
+    classDef presentation fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef application fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef infrastructure fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
+    classDef domain fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    
+    class WR,WB,PR presentation
+    class AS,DTO,IS application
+    class EF,REPO,DI infrastructure
+    class ENT,INT domain
+```
+
+### 🎯 Architecture Benefits
+
+- **🔄 Separation of Concerns**: Each layer has a single responsibility
+- **🔌 Dependency Inversion**: Core logic independent of external concerns
+- **🧪 Testability**: Business logic can be tested in isolation
+- **🔀 Flexibility**: Easy to swap UI technologies or data sources
+- **📦 Maintainability**: Clear structure for easy development and maintenance
+
+## ✨ Features
+
+### 🎨 **Dual UI Options**
+- **Razor Pages**: Traditional server-rendered pages (SEO-optimized)
+- **Blazor Server**: Modern interactive components with real-time updates
+
+### 💼 **Resume Management**
+- **Personal Details**: Comprehensive profile information
+- **Employment History**: Dynamic work experience entries
+- **Education**: Academic background tracking
+- **Skills**: Professional competencies with levels
+- **Live Preview**: Real-time preview while editing (Blazor)
+
+### 🚀 **Technical Features**
+- **Clean Architecture**: Maintainable, testable, scalable design
+- **Responsive Design**: Works perfectly on all devices
+- **Data Persistence**: SQLite (dev) / SQL Server (prod)
+- **Form Validation**: Comprehensive client/server validation
+- **Hot Reload**: Immediate feedback during development
 
 ![Edit Resume](https://github.com/user-attachments/assets/06dfb293-4dff-4419-960f-b2419756eb46)
 
-## Technology Stack
+## 🛠️ Technology Stack
 
-- **Backend**: ASP.NET Core 8.0 with Razor Pages
-- **Database**: Entity Framework Core with SQLite (dev) / SQL Server (prod)
-- **Frontend**: Bootstrap 5, jQuery, DataTables
-- **Styling**: CSS3 with responsive design
+### **Backend**
+- **.NET 9.0**: Latest framework with performance improvements
+- **ASP.NET Core**: Dual UI support (Razor Pages + Blazor Server)
+- **Entity Framework Core**: Modern ORM with migrations
+- **Clean Architecture**: Separation of concerns with DI
 
-## Getting Started
+### **Frontend**
+- **Blazor Server**: Interactive components with SignalR
+- **Razor Pages**: SEO-optimized server-rendered pages
+- **Bootstrap 5**: Responsive design framework
+- **Modern CSS**: Clean, accessible styling
 
-### Prerequisites
+### **Database**
+- **SQLite**: Development database (file-based)
+- **SQL Server**: Production-ready option
+- **Code-First Migrations**: Schema versioning
 
-- [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
-- [Visual Studio 2022](https://visualstudio.microsoft.com/) or [Visual Studio Code](https://code.visualstudio.com/)
+## 🚀 Getting Started
 
-### Installation
+### 📋 Prerequisites
+
+- [**.NET 9.0 SDK**](https://dotnet.microsoft.com/download/dotnet/9.0) or later
+- [**Visual Studio 2022**](https://visualstudio.microsoft.com/) or [**Visual Studio Code**](https://code.visualstudio.com/)
+
+### ⚡ Quick Start
 
 1. **Clone the repository**
    ```bash
@@ -41,22 +125,39 @@ A modern ASP.NET Core 8.0 web application that offers an easy way to create and 
    dotnet restore
    ```
 
-3. **Build the project**
+3. **Build the solution**
    ```bash
-   dotnet build
+   dotnet build PersonalWebPageManagementSystem.sln
    ```
 
-4. **Run the application**
+4. **Choose your UI experience:**
+
+   **🎨 Blazor Server (Recommended - Interactive)**
    ```bash
-   dotnet run
+   dotnet run --project PersonalWebPageManagementSystem.Web.Blazor
    ```
+   Navigate to: `https://localhost:5157`
 
-5. **Open your browser**
-   - Navigate to `http://localhost:5000` (or the URL shown in the console)
+   **📄 Razor Pages (Traditional - SEO Optimized)**
+   ```bash
+   dotnet run --project PersonalWebPageManagementSystem.Web.Razor
+   ```
+   Navigate to: `https://localhost:5113`
 
-### Development Setup
+### 🛠️ Development Mode
 
-The application automatically creates a SQLite database (`WPMS.db`) on first run in development mode. No additional database setup is required for development.
+**Hot reload for instant feedback:**
+```bash
+# Blazor Server with hot reload
+dotnet watch --project PersonalWebPageManagementSystem.Web.Blazor
+
+# Razor Pages with hot reload
+dotnet watch --project PersonalWebPageManagementSystem.Web.Razor
+```
+
+### 💾 Database Setup
+
+The application automatically creates a SQLite database (`WPMS.db`) on first run. No additional setup required for development!
 
 ## Configuration
 

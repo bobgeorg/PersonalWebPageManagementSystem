@@ -2,8 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using PersonalWebPageManagementSystem.Application.Services;
-using PersonalWebPageManagementSystem.Web.Razor.Mappers;
-using PersonalWebPageManagementSystem.Web.Razor.ViewModels;
+using PersonalWebPageManagementSystem.Presentation.Mappers;
+using PersonalWebPageManagementSystem.Presentation.ViewModels;
 
 namespace PersonalWebPageManagementSystem.Web.Razor.Pages
 {
